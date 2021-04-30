@@ -10,21 +10,18 @@ import {
 } from "react-native";
 
 import firebase from "../../Firebase";
-import { useSelector, useDispatch } from "react-redux";
+
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 
 import HeaderButton from "../../components/UI/HeaderButton";
 import ProductItem from "../../components/shop/ProductItem";
-import * as cartActions from "../../store/actions/cart";
-import * as productActions from "../../store/actions/products";
-import Colors from "../../constants/Colors";
-import { TouchableWithoutFeedback } from "react-native-gesture-handler";
-import CartItem from "../../models/cart-item";
 
+import Colors from "../../constants/Colors";
+
+import * as Animatable from "react-native-animatable";
 const db = firebase.firestore();
 
 const ProductsOverviewScreen = (props) => {
-  const dispatch = useDispatch();
   const [product, setproduct] = useState([]);
   useEffect(() => {
     db.collection("product").onSnapshot((querySnapshot) => {
@@ -32,19 +29,14 @@ const ProductsOverviewScreen = (props) => {
       querySnapshot.forEach((doc) => {
         const prod = { id: doc.id, ...doc.data() };
         tempprod.push(prod);
-        // doc.data() is never undefined for query doc snapshots
-        // console.log(doc.id, " => ", doc.data());
       });
       setproduct(tempprod);
     });
   }, []);
-  dispatch(productActions.addProduct(product));
-  // console.log("itno product", product);
-  // console.log(product);
 
   const AddnewDoc = (cart) => {
     const userid = firebase.auth().currentUser.uid;
-    // console.log("user id", userid);
+
     db.collection("cart")
       .doc(userid)
       .collection("cartitem")
@@ -70,8 +62,6 @@ const ProductsOverviewScreen = (props) => {
     //
   };
 
-  const products = useSelector((state) => state.products.availableProducts);
-
   const selectItemHandler = (id, title) => {
     props.navigation.navigate("ProductDetail", {
       productId: id,
@@ -84,9 +74,9 @@ const ProductsOverviewScreen = (props) => {
       data={product}
       keyExtractor={(item) => item.id}
       renderItem={(itemData) => {
-        // console.log("from flat list", itemData);
         return (
           <ProductItem
+            index={itemData.index}
             image={itemData.item.imageUrl}
             title={itemData.item.name}
             price={itemData.item.price}
@@ -103,12 +93,6 @@ const ProductsOverviewScreen = (props) => {
               }}
               onPress={() => {
                 AddnewDoc(itemData.item);
-
-                // console.log("item detail", itemData.item);
-
-                // dispatch(
-                //   cartActions.addToCart({ ...itemData.item, fromcart: false })
-                // );
               }}
             >
               <Text

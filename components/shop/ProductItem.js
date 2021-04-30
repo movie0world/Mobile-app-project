@@ -10,7 +10,7 @@ import {
 } from "react-native";
 
 import Card from "../UI/Card";
-
+import * as Animatable from "react-native-animatable";
 const ProductItem = (props) => {
   let TouchableCmp = TouchableOpacity;
 
@@ -19,16 +19,41 @@ const ProductItem = (props) => {
   }
 
   return (
-    <Card style={styles.product}>
+    <Card
+      style={styles.product}
+      animatedprops={{
+        animation: "jello",
+        // duration: 10000,
+        // useNativeDriver: true,
+        // delay: props.index * 100,
+      }}
+    >
       <View style={styles.touchable}>
         <TouchableCmp onPress={props.onSelect} useForeground>
           <View>
             <View style={styles.imageContainer}>
-              <Image style={styles.image} source={{ uri: props.image }} />
+              <Animatable.Image
+                animation="zoomIn"
+                delay={1000}
+                style={styles.image}
+                source={{ uri: props.image }}
+              />
             </View>
             <View style={styles.details}>
-              <Text style={styles.title}>{props.title}</Text>
-              <Text style={styles.price}>${props.price}</Text>
+              <Animatable.Text
+                animation="fadeInRight"
+                delay={1000}
+                style={styles.title}
+              >
+                {props.title}
+              </Animatable.Text>
+              <Animatable.Text
+                animation="fadeInUp"
+                delay={1000}
+                style={styles.price}
+              >
+                ${props.price}
+              </Animatable.Text>
             </View>
             <View style={styles.actions}>{props.children}</View>
           </View>

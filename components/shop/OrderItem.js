@@ -23,7 +23,6 @@ const OrderItem = (props) => {
 
   const [showDetails, setShowDetails] = useState(false);
   useEffect(() => {
-    // console.log("orderid", props.orderid);
     db.collection("order")
       .doc(userid)
       .collection("orderlist")
@@ -32,13 +31,10 @@ const OrderItem = (props) => {
       .onSnapshot((d) => {
         let temparr = [];
         d.forEach((data) => {
-          // console.log("inside side effect", data.data());
           temparr.push(data.data());
         });
         setorderitem(temparr);
       });
-
-    // console.log("from order item", product);
   }, []);
 
   return (
@@ -46,7 +42,6 @@ const OrderItem = (props) => {
       activeOpacity={0.9}
       style={{ marginBottom: 12 }}
       onPress={() => {
-        console.log("called");
         setShowDetails((prevState) => !prevState);
       }}
     >
@@ -64,10 +59,14 @@ const OrderItem = (props) => {
         {showDetails && (
           <View style={styles.detailItems}>
             {orderitem.map((cartItem, index) => {
-              // console.log("productid", product[index]);
-
               return (
-                <Card>
+                <Card
+                  animatedprops={{
+                    animation: "zoomIn",
+                    // delay: index * 100,
+                    useNativeDriver: true,
+                  }}
+                >
                   <View key={cartItem.productid}>
                     <Image
                       source={{ uri: cartItem.imageUrl }}

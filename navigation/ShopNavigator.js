@@ -5,18 +5,11 @@ import {
   DrawerItemList,
   DrawerContentScrollView,
 } from "@react-navigation/drawer";
-import { NavigationContainer } from "@react-navigation/native";
+
 import { Button, Image, Platform, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import firebase from "../Firebase";
 
-import { useSelector, useDispatch } from "react-redux";
-// import ProductsOverviewScreen from "../screens/shop/ProductsOverviewScreen";
-// import ProductDetailScreen from "../screens/shop/ProductDetailScreen";
-// import CartScreen from "../screens/shop/CartScreen";
-// import OrdersScreen from "../screens/shop/OrdersScreen";
-// import UserProductsScreen from "../screens/user/UserProductsScreen";
-// import EditProductScreen from "../screens/user/EditProductScreen";
 import Colors from "../constants/Colors";
 
 import { AntDesign } from "@expo/vector-icons";
@@ -32,16 +25,6 @@ import CartScreen, {
 import OrdersScreen, {
   screenOptions as ordersScreenOptions,
 } from "../screens/shop/OrdersScreen";
-import UserProductsScreen, {
-  screenOptions as userProductsScreenOptions,
-} from "../screens/user/UserProductsScreen";
-import EditProductScreen, {
-  screenOptions as editProductScreenOptions,
-} from "../screens/user/EditProductScreen";
-// import AuthScreen, {
-//   screenOptions as authScreenOptions,
-// } from "../screens/user/AuthScreen";
-// import StartupScreen from "../screens/StartupScreen";
 
 const defaultNavOptions = {
   headerStyle: {
@@ -60,7 +43,7 @@ import HeaderButton from "../components/UI/HeaderButton";
 import { Badge } from "react-native-paper";
 const ProductsStackNavigator = createStackNavigator();
 const ProductsNavigator = () => {
-  const cartTotalAmount = useSelector((state) => state.cart.items);
+  // const cartTotalAmount = useSelector((state) => state.cart.items);
   const userid = firebase.auth().currentUser.uid;
   const [cartcount, setcartcount] = useState(0);
   const db = firebase.firestore();
@@ -99,7 +82,7 @@ const ProductsNavigator = () => {
               title="Cart"
               iconName={Platform.OS === "android" ? "md-cart" : "ios-cart"}
               onPress={() => {
-                console.log("cart item", Object.keys(cartTotalAmount).length);
+                // console.log("cart item", Object.keys(cartTotalAmount).length);
                 navData.navigation.navigate("Cart");
               }}
             />
@@ -130,43 +113,6 @@ const ProductsNavigator = () => {
   );
 };
 
-// const ProductsNavigator = createStackNavigator(
-//   {
-//     ProductsOverview: ProductsOverviewScreen,
-//     ProductDetail: ProductDetailScreen,
-//     Cart: CartScreen,
-//   },
-//   {
-//     navigationOptions: {
-//       drawerIcon: (drawerConfig) => (
-//         <Ionicons
-//           name={Platform.OS === "android" ? "md-cart" : "ios-cart"}
-//           size={23}
-//           color={drawerConfig.tintColor}
-//         />
-//       ),
-//     },
-//     defaultNavigationOptions: defaultNavOptions,
-//   }
-// );
-
-// const OrdersNavigator = createStackNavigator(
-//   {
-//     Orders: OrdersScreen,
-//   },
-//   {
-//     navigationOptions: {
-//       drawerIcon: (drawerConfig) => (
-//         <Ionicons
-//           name={Platform.OS === "android" ? "md-list" : "ios-list"}
-//           size={23}
-//           color={drawerConfig.tintColor}
-//         />
-//       ),
-//     },
-//     defaultNavigationOptions: defaultNavOptions,
-//   }
-// );
 const OrdersStackNavigator = createStackNavigator();
 
 const OrdersNavigator = () => {
@@ -198,33 +144,12 @@ const AdminNavigator = () => {
     </AdminStackNavigator.Navigator>
   );
 };
-
-// const AdminNavigator = createStackNavigator(
-//   {
-//     UserProducts: UserProductsScreen,
-//     EditProduct: EditProductScreen,
-//   },
-//   {
-//     navigationOptions: {
-//       drawerIcon: (drawerConfig) => (
-//         <Ionicons
-//           name={Platform.OS === "android" ? "md-create" : "ios-create"}
-//           size={23}
-//           color={drawerConfig.tintColor}
-//         />
-//       ),
-//     },
-//     defaultNavigationOptions: defaultNavOptions,
-//   }
-// );
 import { SafeAreaView } from "react-navigation";
 import { Avatar } from "react-native-paper";
 
 const ShopDrawerNavigator = createDrawerNavigator();
 
 const ShopNavigator = () => {
-  const dispatch = useDispatch();
-
   return (
     <ShopDrawerNavigator.Navigator
       drawerContent={(props) => {
@@ -309,8 +234,6 @@ const ShopNavigator = () => {
                   color={Colors.primary}
                   onPress={() => {
                     firebase.auth().signOut();
-                    // dispatch(authActions.logout());
-                    // props.navigation.navigate('Auth');
                   }}
                 />
               </SafeAreaView>

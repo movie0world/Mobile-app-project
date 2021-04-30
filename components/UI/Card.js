@@ -1,9 +1,14 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
-
+import * as Animatable from "react-native-animatable";
 const Card = (props) => {
   return (
-    <View style={{ ...styles.card, ...props.style }}>{props.children}</View>
+    <Animatable.View
+      {...props.animatedprops}
+      style={{ ...styles.card, ...props.style }}
+    >
+      {props.children}
+    </Animatable.View>
   );
 };
 

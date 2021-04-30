@@ -9,22 +9,22 @@ import {
   Platform,
   TouchableOpacity,
 } from "react-native";
-import { useSelector, useDispatch } from "react-redux";
+
 import Card from "../../components/UI/Card";
 import Colors from "../../constants/Colors";
-import * as cartActions from "../../store/actions/cart";
+
 import { Ionicons } from "@expo/vector-icons";
 import { Badge } from "react-native-paper";
 
 import firebase from "../../Firebase";
 const db = firebase.firestore();
+
+import * as Animatable from "react-native-animatable";
 const ProductDetailScreen = (props) => {
-  // console.log("in product detial", props);
   const [product, setproductdetail] = useState({});
   const productId = props.route.params.productId;
 
   useEffect(() => {
-    console.log("props in detail", props);
     db.collection("product")
       .doc(productId)
       .get()
@@ -32,12 +32,7 @@ const ProductDetailScreen = (props) => {
         setproductdetail(querySnapshot.data());
       });
   }, []);
-  const selectedProduct = useSelector((state) =>
-    state.products.availableProducts.find((prod) => prod.id === productId)
-  );
-  console.log("selectedd project", selectedProduct);
-  // const dispatch = useDispatch();
-  // const cartTotalAmount = useSelector((state) => state.cart.items);
+
   return (
     <View>
       <TouchableOpacity
@@ -68,12 +63,11 @@ const ProductDetailScreen = (props) => {
       </TouchableOpacity>
 
       <ScrollView>
-        <View style={{ backgroundColor: "yellow" }}>
-          <Image
-            style={styles.image}
-            source={{ uri: selectedProduct.imageUrl }}
-          />
-          <View
+        <View>
+          <Image style={styles.image} source={{ uri: product.imageUrl }} />
+          <Animatable.View
+            animation="bounceInDown"
+            useNativeDriver
             style={{
               justifyContent: "flex-end",
               padding: 10,
@@ -84,22 +78,22 @@ const ProductDetailScreen = (props) => {
             <Text style={{ fontSize: 25, textAlign: "center" }}>
               {product.name}
             </Text>
-          </View>
+          </Animatable.View>
         </View>
         <View style={styles.actions}>
-          <Text style={styles.price}>${selectedProduct.price}</Text>
+          <Text style={styles.price}>${product.price}</Text>
           <Button
             color={Colors.primary}
             title="Add to Cart"
             onPress={() => {
-              dispatch(cartActions.addToCart(product));
+              // dispatch(cartActions.addToCart(product));
             }}
           />
         </View>
         <Card style={{ padding: 15, marginHorizontal: 10, marginVertical: 10 }}>
           <Text>Description</Text>
         </Card>
-        <Text style={styles.description}>{selectedProduct.Description}</Text>
+        <Text style={styles.description}>{product.Description}</Text>
       </ScrollView>
     </View>
   );

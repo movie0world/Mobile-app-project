@@ -14,15 +14,12 @@ import Card from "../UI/Card";
 import { MaterialIcons } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 import { Entypo } from "@expo/vector-icons";
-import { useDispatch } from "react-redux";
-import * as cartActions from "../../store/actions/cart";
 
 import firebase from "../../Firebase";
+import { TouchableRipple } from "react-native-paper";
 const db = firebase.firestore();
 
 const CartItem = (props) => {
-  const dispatch = useDispatch();
-
   const userid = firebase.auth().currentUser.uid;
 
   const deleteCartItem = (cartid) => {
@@ -40,9 +37,6 @@ const CartItem = (props) => {
   };
 
   const AddnewDoc = (cartid, type) => {
-    // console.log("user id", userid);
-
-    console.log("Card id", cartid);
     db.collection("cart")
       .doc(userid)
       .collection("cartitem")
@@ -74,7 +68,14 @@ const CartItem = (props) => {
   };
 
   return (
-    <Card style={{ marginBottom: 20, overflow: "hidden" }}>
+    <Card
+      animatedprops={{
+        animation: "wobble",
+        useNativeDriver: true,
+        // delay: props.index * 100,
+      }}
+      style={{ marginBottom: 20, overflow: "hidden" }}
+    >
       <View style={styles.cartItem}>
         <View style={{ marginBottom: 5, alignItems: "flex-end" }}>
           <TouchableWithoutFeedback onPress={() => deleteCartItem(props.id)}>
@@ -91,9 +92,11 @@ const CartItem = (props) => {
           <Text style={styles.mainText}>${props.price}</Text>
         </View>
         <View style={styles.sec}>
-          <TouchableNativeFeedback onPress={() => AddnewDoc(props.id, "-")}>
-            <Entypo name="minus" size={24} color="black" />
-          </TouchableNativeFeedback>
+          <TouchableRipple>
+            <TouchableNativeFeedback onPress={() => AddnewDoc(props.id, "-")}>
+              <Entypo name="minus" size={24} color="black" />
+            </TouchableNativeFeedback>
+          </TouchableRipple>
           <Text style={styles.quantity}>{props.quantity} </Text>
           <TouchableNativeFeedback onPress={() => AddnewDoc(props.id, "+")}>
             <Entypo name="plus" size={24} color="black" />

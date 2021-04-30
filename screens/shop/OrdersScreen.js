@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { FlatList, Text, Platform } from "react-native";
-import { useSelector } from "react-redux";
+
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 
 import HeaderButton from "../../components/UI/HeaderButton";
 import OrderItem from "../../components/shop/OrderItem";
-// import { screenOptions } from "./ProductDetailScreen";
+
 import firebase from "../../Firebase";
 const OrdersScreen = (props) => {
-  const orders = useSelector((state) => state.orders.orders);
   const [orderlist, setorderlist] = useState([]);
   const db = firebase.firestore();
   const userid = firebase.auth().currentUser.uid;
@@ -30,16 +29,12 @@ const OrdersScreen = (props) => {
       data={orderlist}
       keyExtractor={(item) => item.id}
       renderItem={(itemData) => {
-        // console.log("test id", itemData);
         return (
           <OrderItem
             orderid={itemData.item.id}
             status={itemData.item.status}
             orderdate={itemData.item.order_at}
             total={itemData.item.total}
-            // amount={itemData.item.totalAmount}
-            // date={itemData.item.readableDate}
-            // items={itemData.item.items}
           />
         );
       }}
