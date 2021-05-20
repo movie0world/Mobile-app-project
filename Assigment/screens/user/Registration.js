@@ -2,58 +2,86 @@ import React, { useState } from "react";
 import {
   View,
   Text,
-  StyleSheet,
-  TouchableHighlight,
-  ScrollView,
   TouchableNativeFeedback,
-  TouchableOpacity,
+  ScrollView,
+  KeyboardAvoidingView,
+  ActivityIndicator,
 } from "react-native";
-import {
-  Button,
-  Divider,
-  TextInput,
-  TouchableRipple,
-} from "react-native-paper";
+import { TextInput, Button, TouchableRipple } from "react-native-paper";
+import firebase from "../../Firebase";
 
 import * as yup from "yup";
 import { Formik, useFormikContext } from "formik";
 
 let userschema = yup.object().shape({
+  name: yup.string().required().min(6),
   email: yup.string().required().email(),
   password: yup.string().required().min(8),
 });
 
-import firebase from "../../Firebase";
-import fire from "firebase";
+// check validity
 
-export default function Login(props) {
+export default function Registration(props) {
+  const [loading, setloading] = useState(false);
   const [error, seterror] = useState("");
   const submit = (value, action) => {
+    setloading(true);
     seterror("");
     firebase
       .auth()
-      .signInWithEmailAndPassword(value.email, value.password)
+      .createUserWithEmailAndPassword(value.email, value.password)
       .then((userCredential) => {
-        // Signed in
         var user = userCredential.user;
         // ...
         action.resetForm();
+        const edituser = firebase.auth().currentUser;
+        edituser
+          .updateProfile({ displayName: value.name })
+          .then(() => {
+            props.navigation.replace("Login");
+            setloading(false);
+          })
+          .catch(() => {
+            setloading(false);
+          });
       })
       .catch((error) => {
         var errorCode = error.code;
         var errorMessage = error.message;
         console.log(errorMessage);
         seterror(errorMessage);
-
+        setloading(false);
         // ..
       });
   };
-
+  //   console.log(Formik);
+  //   console.log("regsildj", props);
   return (
     <View style={{ flex: 1, justifyContent: "center" }}>
-      <View style={{ padding: 10, backgroundColor: "teal", marginTop: 25 }}>
+      {loading && (
+        <View
+          style={{
+            flex: 1,
+            width: "100%",
+            height: "100%",
+            position: "absolute",
+            zIndex: 1,
+            backgroundColor: "rgba(0,0,0,0.7)",
+            justifyContent: "center",
+          }}
+        >
+          <ActivityIndicator size="large" color="teal" />
+        </View>
+      )}
+      <View
+        style={{
+          padding: 10,
+          backgroundColor: "teal",
+          marginTop: 25,
+        }}
+      >
         <Text style={{ fontSize: 30, fontWeight: "bold", color: "white" }}>
-          Login
+          Registration
         </Text>
       </View>
       <ScrollView
@@ -70,6 +98,7 @@ export default function Login(props) {
         <Formik
           validationSchema={userschema}
           initialValues={{
+            name: "",
             email: "",
             password: "",
           }}
@@ -85,12 +114,35 @@ export default function Login(props) {
             isSubmitting,
             /* and other goodies */
           }) => (
-            <View style={{ justifyContent: "space-between" }}>
+            <View style={{ justifyContent: "center" }}>
               <Text style={{ color: "red", marginBottom: 15 }}>
                 {" "}
                 {error && error}
               </Text>
-
+              <TextInput
+                mode="outlined"
+                style={!errors.name && { marginBottom: 15 }}
+                onChangeText={handleChange("name")}
+                onBlur={handleBlur("name")}
+                value={values.name}
+                placeholder="Enter your Name"
+                theme={{
+                  colors: {
+                    primary: "teal",
+                    placeholder: "teal",
+                    background: "white",
+                  },
+                }}
+                selectionColor="teal"
+                underlineColor="teal"
+                label="First Name"
+              />
+              {errors.name && touched.name && (
+                <Text style={{ color: "red", marginBottom: 15 }}>
+                  {" "}
+                  {errors.name}
+                </Text>
+              )}
               <TextInput
                 style={!errors.email && { marginBottom: 15 }}
                 mode="outlined"
@@ -155,7 +207,7 @@ export default function Login(props) {
                     mode="contained"
                     onPress={handleSubmit}
                   >
-                    SignIN
+                    SignUp
                   </Button>
                 </TouchableRipple>
               </View>
@@ -170,35 +222,15 @@ export default function Login(props) {
             marginVertical: 15,
           }}
         >
-          <TouchableOpacity
-            style={{ padding: 10, backgroundColor: "teal", color: "white" }}
-            onPress={() => {
-              // Using a redirect.
-              var provider = new fire.auth.GoogleAuthProvider();
-              provider.addScope("profile");
-              provider.addScope("email");
-              fire
-                .auth()
-                .signInWithPopup(provider)
-                .then(function (result) {
-                  // This gives you a Google Access Token.
-                  var token = result.credential.accessToken;
-                  // The signed-in user info.
-                  var user = result.user;
-                });
-            }}
-          >
-            <Text>Login with Google</Text>
-          </TouchableOpacity>
           <Text>
-            Don't have account ?
+            Do you have account ?
             <TouchableNativeFeedback
-              onPress={() => props.navigation.replace("Registration")}
+              onPress={() => props.navigation.replace("Login")}
             >
               <Text
                 style={{ color: "teal", fontWeight: "bold", paddingTop: 5 }}
               >
-                Sign Up
+                Sign In
               </Text>
             </TouchableNativeFeedback>
           </Text>
@@ -207,4 +239,3 @@ export default function Login(props) {
     </View>
   );
 }
-const styles = StyleSheet.create({});
