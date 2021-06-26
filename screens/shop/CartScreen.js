@@ -9,11 +9,10 @@ import { FAB, Button } from "react-native-paper";
 
 const { width, height } = Dimensions.get("window");
 
-import moment from "moment";
-
 import firebase from "../../Firebase";
 
 const CartScreen = (props) => {
+  // console.log(props);
   const db = firebase.firestore();
   const [cart, setcart] = useState([]);
   const userid = firebase.auth().currentUser.uid;
@@ -35,39 +34,7 @@ const CartScreen = (props) => {
       (total, item) => item.quantity * item.price + total,
       0
     );
-
-    db.collection("order")
-      .doc(userid)
-      .collection("orderlist")
-      .add({
-        status: "pending",
-        total: total,
-        order_at: moment().format("MMMM Do YYYY, h:mm:ss a"),
-      })
-      .then((d) => {
-        cart.forEach((item) => {
-          db.collection("order")
-            .doc(userid)
-            .collection("orderlist")
-            .doc(d.id)
-            .collection("orderitem")
-            .add({
-              ...item,
-            })
-            .then(() => {
-              cart.forEach((item) => {
-                db.collection("cart")
-                  .doc(userid)
-                  .collection("cartitem")
-                  .doc(item.id)
-                  .delete();
-              });
-            });
-        });
-      })
-      .catch((error) => {
-        console.error("Error writing document: ", error);
-      });
+    props.navigation.navigate("Payment", { total: total, cart: cart });
   };
 
   return (

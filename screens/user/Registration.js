@@ -10,6 +10,7 @@ import {
 import { TextInput, Button, TouchableRipple } from "react-native-paper";
 import firebase from "../../Firebase";
 
+import * as ImagePicker from "expo-image-picker";
 import * as yup from "yup";
 import { Formik, useFormikContext } from "formik";
 
@@ -24,6 +25,9 @@ let userschema = yup.object().shape({
 export default function Registration(props) {
   const [loading, setloading] = useState(false);
   const [error, seterror] = useState("");
+
+  var storageRef = firebase.storage().ref();
+
   const submit = (value, action) => {
     setloading(true);
     seterror("");
@@ -34,6 +38,7 @@ export default function Registration(props) {
         var user = userCredential.user;
         // ...
         action.resetForm();
+        storageRef;
         const edituser = firebase.auth().currentUser;
         edituser
           .updateProfile({ displayName: value.name })

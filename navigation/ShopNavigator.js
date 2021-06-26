@@ -10,6 +10,7 @@ import { Button, Image, Platform, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import firebase from "../Firebase";
 
+import Payment from "../screens/shop/Payment";
 import Colors from "../constants/Colors";
 
 import { AntDesign } from "@expo/vector-icons";
@@ -109,6 +110,11 @@ const ProductsNavigator = () => {
         component={CartScreen}
         options={cartScreenOptions}
       />
+      <ProductsStackNavigator.Screen
+        name="Payment"
+        component={Payment}
+        options={{ headerShown: false }}
+      />
     </ProductsStackNavigator.Navigator>
   );
 };
@@ -178,8 +184,7 @@ const ShopNavigator = () => {
                         borderRadius: 60 / 2,
                       }}
                       source={{
-                        uri:
-                          "https://cdn.pixabay.com/photo/2018/01/15/07/51/woman-3083383__340.jpg",
+                        uri: "https://cdn.pixabay.com/photo/2018/01/15/07/51/woman-3083383__340.jpg",
                       }}
                     />
                     <View

@@ -38,6 +38,7 @@ export default function Login(props) {
         var user = userCredential.user;
         // ...
         action.resetForm();
+        props.navigation.replace("ProductOverviewScreen");
       })
       .catch((error) => {
         var errorCode = error.code;
@@ -170,26 +171,6 @@ export default function Login(props) {
             marginVertical: 15,
           }}
         >
-          <TouchableOpacity
-            style={{ padding: 10, backgroundColor: "teal", color: "white" }}
-            onPress={() => {
-              // Using a redirect.
-              var provider = new fire.auth.GoogleAuthProvider();
-              provider.addScope("profile");
-              provider.addScope("email");
-              fire
-                .auth()
-                .signInWithPopup(provider)
-                .then(function (result) {
-                  // This gives you a Google Access Token.
-                  var token = result.credential.accessToken;
-                  // The signed-in user info.
-                  var user = result.user;
-                });
-            }}
-          >
-            <Text>Login with Google</Text>
-          </TouchableOpacity>
           <Text>
             Don't have account ?
             <TouchableNativeFeedback

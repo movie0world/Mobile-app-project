@@ -25,6 +25,7 @@ import Auth from "./navigation/AuthNavigator";
 import Login from "./screens/user/Login";
 import Registration from "./screens/user/Registration";
 import { NavigationContainer } from "@react-navigation/native";
+// import { CreditCardInput } from "react-native-payment-card";
 
 const fetchFonts = () => {
   return Font.loadAsync({
@@ -33,10 +34,17 @@ const fetchFonts = () => {
   });
 };
 
+import { color } from "react-native-reanimated";
+
 export default function App() {
   const [fontLoaded, setFontLoaded] = useState(false);
   const [user, setuser] = useState(false);
   const [loading, setloading] = useState(false);
+
+  const gettoken = async () => {};
+  React.useEffect(() => {
+    gettoken();
+  }, []);
 
   React.useEffect(() => {
     setloading(true);
@@ -68,6 +76,20 @@ export default function App() {
 
   return (
     <View style={{ flex: 1 }}>
+      {!fontLoaded && <Image source={{ uri: require("./assets/Ecom.png") }} />}
+      {/* // or */}
+      {/* <LiteCreditCardInput onChange={this._onChange} /> */}
+      {/* <CreditCardInput
+        autoFocus
+        // requiresName
+        allowScroll
+        values={{ cardtype: "Debit" }}
+        requiresCVC
+        validColor={"black"}
+        invalidColor={"red"}
+        placeholderColor={"darkgray"}
+        onChange={(item) => console.log("data", item)}
+      /> */}
       <NavigationContainer>
         {loading ? (
           <View

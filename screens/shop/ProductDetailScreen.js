@@ -22,16 +22,53 @@ const db = firebase.firestore();
 import * as Animatable from "react-native-animatable";
 const ProductDetailScreen = (props) => {
   const [product, setproductdetail] = useState({});
+  const [cartcount, setcartcount] = useState(0);
   const productId = props.route.params.productId;
+  const userid = firebase.auth().currentUser.uid;
 
   useEffect(() => {
     db.collection("product")
       .doc(productId)
       .get()
       .then((querySnapshot) => {
-        setproductdetail(querySnapshot.data());
+        setproductdetail({ id: querySnapshot.id, ...querySnapshot.data() });
+      });
+    db.collection("cart")
+      .doc(userid)
+      .collection("cartitem")
+      .onSnapshot((querySnapshot) => {
+        let testarr = [];
+        querySnapshot.forEach((doc) => testarr.push(doc.data()));
+        setcartcount(testarr.length);
       });
   }, []);
+
+  console.log(product);
+  const AddnewDoc = () => {
+    db.collection("cart")
+      .doc(userid)
+      .collection("cartitem")
+      .doc(product.id)
+      .get()
+      .then((d) => {
+        db.collection("cart")
+          .doc(userid)
+          .collection("cartitem")
+          .doc(product.id)
+          .set({
+            ...product,
+            quantity: d.exists ? d?.data()?.quantity + 1 : 1,
+          })
+          .then(() => {
+            console.log("Document successfully written!");
+          })
+          .catch((error) => {
+            console.error("Error writing document: ", error);
+          });
+      });
+
+    //
+  };
 
   return (
     <View>
@@ -44,16 +81,13 @@ const ProductDetailScreen = (props) => {
         <Ionicons name="arrow-back-circle-sharp" size={35} color="white" />
       </TouchableOpacity>
       <TouchableOpacity
-        onPress={() => {
-          props.navigation.pop();
-        }}
+        onPress={() => props.navigation.push("Cart")}
         style={{ position: "absolute", top: 28, zIndex: 2, right: 10 }}
       >
         <TouchableOpacity
-          onPress={() => props.navigation.push("Cart")}
-          style={{ position: "absolute", top: -5, right: -2, zIndex: 2 }}
+          style={{ position: "absolute", top: -2, right: -2, zIndex: 2 }}
         >
-          {/* <Badge>{Object.keys(cartTotalAmount).length}</Badge> */}
+          <Badge>{cartcount}</Badge>
         </TouchableOpacity>
         <Ionicons
           name={Platform.OS === "android" ? "md-cart" : "ios-cart"}
@@ -86,7 +120,7 @@ const ProductDetailScreen = (props) => {
             color={Colors.primary}
             title="Add to Cart"
             onPress={() => {
-              // dispatch(cartActions.addToCart(product));
+              AddnewDoc();
             }}
           />
         </View>
